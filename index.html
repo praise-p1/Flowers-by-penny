@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>🌸 Flowers for a Friend</title>
+<meta name="description" content="A friendly, platonic flower gift with animations." />
+<style>
+  :root{
+    --bg1:#ffe8f3; --bg2:#ffdaf0; --accent:#ff7bb3; --leaf:#7bd389; --center:#ffd166;
+    --text:#27222a;
+  }
+
+  /* ==== Base layout ==== */
+  html,body{height:100%;margin:0}
+  body{
+    display:grid;place-items:center;
+    background: radial-gradient(circle at 20% 15%, var(--bg1), var(--bg2) 60%, #ffd1ea 100%);
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans", sans-serif;
+    color: var(--text);
+    overflow:hidden;
+  }
+
+  .card{
+    width:min(820px,92vw);
+    padding:24px 18px 28px;
+    background:#ffffffd9;
+    backdrop-filter:saturate(120%) blur(8px);
+    border-radius:26px;
+    box-shadow:0 14px 48px rgba(255,123,179,.35);
+    text-align:center;
+    position:relative;
+  }
+
+  h1{margin:4px 0 2px;font-size:clamp(22px,5.5vw,34px)}
+  .sub{margin:0 0 14px;color:#5d5660;font-size:clamp(14px,3.5vw,16px)}
+
+  /* ==== Garden area ==== */
+  .garden{
+    position:relative;
+    height:280px;
+    margin:6px auto 12px;
+  }
+
+  /* stem */
+  .stem{
+    width:8px;height:150px;background:var(--leaf);
+    margin:0 auto;border-radius:6px;
+    position:absolute;bottom:34px;left:50%;transform:translateX(-50%);
+    box-shadow:0 0 0 2px #0000;
+  }
+
+  /* leaves */
+  .leaf{position:absolute;width:60px;height:26px;background:var(--leaf);
+    border-radius:26px 26px 26px 6px;top:140px}
+  .leaf.left{left:calc(50% - 44px);transform:rotate(-25deg)}
+  .leaf.right{right:calc(50% - 44px);transform:scaleX(-1) rotate(-25deg)}
+
+  /* flower head */
+  .flower{
+    width:160px;height:160px;position:absolute;left:50%;top:34px;
+    transform:translateX(-50%) scale(.6);opacity:0;
+    animation:bloom 1200ms ease-out forwards 200ms;
+    transform-origin:center center;
+  }
+
+  .petal{
+    --i:0;
+    width:78px;height:110px;background:var(--accent);
+    position:absolute;left:50%;top:50%;
+    border-radius:50px 50px 6px 6px;
+    transform-origin:50% 90%;
+    transform:rotate(calc(var(--i)*45deg)) translate(-50%,-92%);
+    filter:drop-shadow(0 3px 12px rgba(255,123,179,.35));
+  }
+
+  .center{
+    width:92px;height:92px;background:var(--center);
+    border-radius:50%;position:absolute;left:50%;top:50%;
+    transform:translate(-50%,-50%);
+    box-shadow: inset 0 0 12px rgba(0,0,0,.08), 0 0 18px rgba(255,209,102,.6);
+    animation: glow 2.6s ease-in-out infinite;
+  }
+
+  @keyframes glow{50%{box-shadow: inset 0 0 12px rgba(0,0,0,.08), 0 0 32px rgba(255,209,102,.9)}}
+
+  @keyframes bloom{
+    0%{transform:translateX(-50%) scale(.1);opacity:0}
+    60%{transform:translateX(-50%) scale(1.05);opacity:1}
+    100%{transform:translateX(-50%) scale(1)}
+  }
+
+  /* floating petals background */
+  .petal-fall{
+    position:absolute;top:-40px;font-size:26px;opacity:.8;
+    animation: fall linear var(--t) infinite, sway ease-in-out var(--t) infinite;
+    pointer-events:none;
+  }
+  @keyframes fall{to{transform:translateY(120vh) rotate(360deg)}}
+  @keyframes sway{50%{margin-left:24px}}
+
+  /* buttons */
+  .controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+  .btn{
+    cursor:pointer;border:0;border-radius:999px;padding:10px 16px;
+    font-weight:700;background:var(--accent);color:white;
+    box-shadow:0 8px 22px rgba(255,123,179,.35);
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn.secondary{background:#8a8cf0;box-shadow:0 8px 22px rgba(138,140,240,.35)}
+
+  /* message */
+  .msg{
+    margin:10px auto 0;
+    font-size:clamp(15px,3.8vw,18px);
+    color:#4a4450;
+    min-height:1.6em;
+  }
+
+  /* high-five wiggle */
+  .wiggle{animation:wig 600ms ease}
+  @keyframes wig{
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-6px)}40%{transform:translateX(6px)}
+    60%{transform:translateX(-4px)}80%{transform:translateX(4px)}
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none!important;transition:none!important}
+  }
+
+  /* credit */
+  .credit{margin-top:10px;font-size:12px;color:#6a6270}
+</style>
+</head>
+<body>
+  <main class="card" role="main" aria-label="Flower gift">
+    <h1 id="title">🌸 A Friendly Flower 🌸</h1>
+    <p class="sub" id="subtitle">Because friends deserve something bright today.</p>
+
+    <section class="garden" aria-hidden="true">
+      <div class="stem"></div>
+      <div class="leaf left"></div>
+      <div class="leaf right"></div>
+
+      <div class="flower" id="flower">
+        <!-- 8 petals around -->
+        <div class="petal" style="--i:0"></div>
+        <div class="petal" style="--i:1"></div>
+        <div class="petal" style="--i:2"></div>
+        <div class="petal" style="--i:3"></div>
+        <div class="petal" style="--i:4"></div>
+        <div class="petal" style="--i:5"></div>
+        <div class="petal" style="--i:6"></div>
+        <div class="petal" style="--i:7"></div>
+        <div class="center"></div>
+      </div>
+    </section>
+
+    <div class="controls">
+      <button class="btn" id="pick">🌼 Pick a Flower</button>
+      <button class="btn secondary" id="highfive">✋ Send a High-Five</button>
+      <button class="btn" id="share">🔗 Share</button>
+    </div>
+
+    <p class="msg" id="message">Tap “Pick a Flower” for a new note 🌼</p>
+    <div class="credit">Made with kindness on GitHub Pages • Platonic vibes only ✨</div>
+  </main>
+
+  <!-- falling petals -->
+  <div id="floaters"></div>
+
+<script>
+  // --- Personalize via URL: ?to=Sam
+  const params = new URLSearchParams(location.search);
+  const to = params.get("to");
+  if(to){
+    document.getElementById("title").textContent = `🌸 A Friendly Flower for ${to} 🌸`;
+    document.getElementById("subtitle").textContent = `Just a tiny burst of color for you, ${to}.`;
+  }
+
+  // --- Floating petals (emoji)
+  const emojis = ["🌸","🌷","🌼","🌻"];
+  const floaters = document.getElementById("floaters");
+  function makePetal(){
+    const el = document.createElement("div");
+    el.className = "petal-fall";
+    el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    el.style.left = Math.random()*100 + "vw";
+    el.style.setProperty("--t", (6 + Math.random()*6) + "s");
+    floaters.appendChild(el);
+    setTimeout(()=>el.remove(), 14000);
+  }
+  for(let i=0;i<24;i++){ setTimeout(makePetal, i*300); }
+  setInterval(makePetal, 900);
+
+  // --- Friendly messages (platonic!)
+  const notes = [
+    "You make ordinary days feel lighter ☀️",
+    "Proud of you for the small wins—keep going! 💪",
+    "Here’s your reminder: you’re capable and kind 🌱",
+    "A little color for your screen, a little cheer for your mind 🎨",
+    "Thanks for being a steady friend 🤝",
+    "You don’t have to do it all today. One step is enough 🧭",
+    "Your effort matters—even when it’s quiet effort ✨",
+    "Hydrate, stretch, and take a micro-break 😌",
+    "If no one said it today: I appreciate you 👍",
+    "You’re learning at your own pace—and that’s perfect 📚"
+  ];
+
+  // --- Confetti burst (emoji)
+  function confettiBurst(x, y){
+    const bits = ["✨","⭐","💫","🌼","🌸"];
+    for(let i=0;i<26;i++){
+      const s = document.createElement("div");
+      s.textContent = bits[Math.floor(Math.random()*bits.length)];
+      s.style.position = "fixed";
+      s.style.left = x+"px"; s.style.top = y+"px";
+      s.style.fontSize = (14 + Math.random()*14)+"px";
+      s.style.pointerEvents = "none";
+      document.body.appendChild(s);
+      const ang = Math.random()*Math.PI*2, dist = 40+Math.random()*120;
+      const dx = Math.cos(ang)*dist, dy = Math.sin(ang)*dist + 40;
+      s.animate([
+        {transform:"translate(0,0)", opacity:1},
+        {transform:`translate(${dx}px,${dy}px) rotate(360deg)`, opacity:0}
+      ], {duration:900+Math.random()*700, easing:"ease-out"});
+      setTimeout(()=>s.remove(), 1800);
+    }
+  }
+
+  // --- Buttons
+  const msg = document.getElementById("message");
+  document.getElementById("pick").addEventListener("click", (e)=>{
+    const note = notes[Math.floor(Math.random()*notes.length)];
+    msg.textContent = note;
+    document.getElementById("flower").classList.remove("wiggle");
+    void document.getElementById("flower").offsetWidth; // restart animation hack
+    document.getElementById("flower").classList.add("wiggle");
+    confettiBurst(e.clientX, e.clientY);
+  });
+
+  document.getElementById("highfive").addEventListener("click", (e)=>{
+    msg.textContent = "High-five delivered! ✋ You’ve got this.";
+    confettiBurst(e.clientX, e.clientY);
+  });
+
+  // Web Share API (best effort)
+  document.getElementById("share").addEventListener("click", async ()=>{
+    const url = location.href;
+    const title = "A Friendly Flower";
+    const text = "Here’s a tiny animated flower and a kind note 🌸 (platonic)";
+    if(navigator.share){
+      try{ await navigator.share({title, text, url}); }
+      catch(e){ /* user canceled */ }
+    }else{
+      navigator.clipboard?.writeText(url);
+      msg.textContent = "Link copied! Share it with a friend 🔗";
+    }
+  });
+</script>
+</body>
+  </html>
